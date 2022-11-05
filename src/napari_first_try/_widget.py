@@ -1,41 +1,59 @@
-"""
-This module is an example of a barebones QWidget plugin for napari
+from pathlib import Path
+from typing import List
 
-It implements the Widget specification.
-see: https://napari.org/plugins/stable/npe2_manifest_specification.html
-
-Replace code below according to your needs.
-"""
-from qtpy.QtWidgets import QWidget, QHBoxLayout, QPushButton
+import napari
 from magicgui import magic_factory
+from napari.layers import Image
+from napari.types import ImageData, LabelsData, LayerDataTuple
 
 
-class ExampleQWidget(QWidget):
-    # your QWidget.__init__ can optionally request the napari viewer instance
-    # in one of two ways:
-    # 1. use a parameter called `napari_viewer`, as done here
-    # 2. use a type annotation of 'napari.viewer.Viewer' for any parameter
-    def __init__(self, napari_viewer):
-        super().__init__()
-        self.viewer = napari_viewer
+@magic_factory(call_button="Add Image")
+def rand_img(
+    new_image: bool,
+    ny: int = 64,
+    nx: int = 64,
+) -> LayerDataTuple:
+    # If you return Image then you get a new Layer every time
+    # If you return ImageData and just the np array, then you get
+    # a new layer the first time, and then it's refreshed
+    import numpy as np
 
-        btn = QPushButton("Click me!")
-        btn.clicked.connect(self._on_click)
-
-        self.setLayout(QHBoxLayout())
-        self.layout().addWidget(btn)
-
-    def _on_click(self):
-        print("napari has", len(self.viewer.layers), "layers")
-
-
-@magic_factory
-def example_magic_widget(img_layer: "napari.layers.Image"):
-    print(f"you have selected {img_layer}")
+    i = 1
+    if new_image is True:
+        return (
+            np.random.randint(0, 256, size=(ny, nx)),
+            {"name": "Random Image"},
+            "image",
+        )
+    else:
+        return (np.random.randint(0, 256, size=(ny, nx)), {}, "Random Image")
 
 
-# Uses the `autogenerate: true` flag in the plugin manifest
-# to indicate it should be wrapped as a magicgui to autogenerate
-# a widget.
-def example_function_widget(img_layer: "napari.layers.Image"):
-    print(f"you have selected {img_layer}")
+@magic_factory(
+    auto_call=True,
+    threshold={"widget_type": "Slider", "min": 0, "max": 2 ** 8},
+)
+def thresh_img(data: ImageData, threshold: int) -> LabelsData:
+    # Because this returns LabelsData it makes a new layer
+    # just the first time, then just changes the labeling
+    # in response to the slider.
+    return (data > threshold).astype(int)
+
+
+
+def on_init(new_widget):
+    """called each time widget_factory creates a new widget."""
+
+    @new_widget.choice.changed.connect
+    def _on_image_path_changed(choice):
+        print(choice)
+
+
+@magic_factory(widget_init=on_init, choice={"choices": ["A", "B", "C"]})
+def widget_factory(
+    # viewer: "napari.viewer.Viewer",
+    image: ImageData,
+    choice: str,
+) -> "napari.types.LabelsData":
+    print(choice)
+    pass

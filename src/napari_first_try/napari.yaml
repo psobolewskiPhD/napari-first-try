@@ -1,21 +1,24 @@
 name: napari-first-try
-display_name: napari Hello
+display_name: Hello Plugin
 contributions:
   commands: 
-    - id: napari-first-try.make_qwidget
-      python_name: napari_first_try._widget:ExampleQWidget
-      title: Make example QWidget
-    - id: napari-first-try.make_magic_widget
-      python_name: napari_first_try._widget:example_magic_widget
-      title: Make example magic widget
-    - id: napari-first-try.make_func_widget
-      python_name: napari_first_try._widget:example_function_widget
-      title: Make example function widget   
+    - id: napari-first-try.rand_img
+      title: Make Random Image
+      python_name: napari_first_try._widget:rand_img
+    - id: napari-first-try.thresh_img
+      title: Threshold Image
+      python_name: napari_first_try._widget:thresh_img
+    - id: napari-first-try.faces
+      title: Olivetti Faces
+      python_name: napari_first_try:faces
+    - id: napari-first-try.widget_factory
+      title: Factory
+      python_name: napari_first_try._widget:widget_factory
+
   widgets:
-    - command: napari-first-try.make_qwidget
-      display_name: Example QWidget
-    - command: napari-first-try.make_magic_widget
-      display_name: Example Magic Widget
-    - command: napari-first-try.make_func_widget
-      autogenerate: true
-      display_name: Example Function Widget 
+    - command: napari-first-try.rand_img  # note, same as command.id above
+      display_name: Random Image Widget
+    - command: napari-first-try.widget_factory  # note, same as command.id above
+      display_name: Widget factory
+    - command: napari-first-try.thresh_img  # note, same as command.id above
+      display_name: Threshold Image
