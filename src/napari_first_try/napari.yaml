@@ -14,7 +14,19 @@ contributions:
     - id: napari-first-try.widget_factory
       title: Factory
       python_name: napari_first_try._widget:widget_factory
-
+    - id: napari-first-try.faces_sample1
+      python_name: napari_first_try._sample_data:faces_sample1
+      title: Load faces data from sklearn (1)
+    - id: napari-first-try.faces_sample2
+      python_name: napari_first_try._sample_data:faces_sample2
+      title: Load faces data from sklearn (2)
+  sample_data:
+    - command: napari-first-try.faces_sample1
+      display_name: Olivetti Faces (1)
+      key: faces_sample1
+    - command: napari-first-try.faces_sample2
+      display_name: Olivetti Faces (2)
+      key: faces_sample2
   widgets:
     - command: napari-first-try.rand_img  # note, same as command.id above
       display_name: Random Image Widget
